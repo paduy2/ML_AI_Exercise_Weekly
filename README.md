@@ -7,3 +7,4 @@ Exercise 8:
   + I won't upload this json file to repo because of size
   + After that, follow the instruction.
   + We must wait about 1 min for the result and 10s for load the graph
+We can get the graph.json by extracting the rar file
