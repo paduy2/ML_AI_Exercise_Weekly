@@ -1,0 +1,2 @@
+# ML_AI_Exercise_Weekly
+Weekly_Exercise
