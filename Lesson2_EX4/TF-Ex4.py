@@ -41,7 +41,7 @@ def print_top_words(word_frequencies):
         print(f"{word}: {frequency}")
 
 def main():
-    file_path = 'story.txt'  # Path to the input file
+    file_path = './story.txt'  # Path to the input file
     text = read_file(file_path)
     cleaned_text = clean_text(text)
     word_frequencies = count_word_frequencies(cleaned_text)
