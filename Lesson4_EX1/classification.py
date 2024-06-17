@@ -11,6 +11,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import GridSearchCV
 import seaborn as sns
 import matplotlib.pyplot as plt
+import joblib
 
 data = pd.read_csv("csgo.csv")
 # profile = ProfileReport(data, title="Match Report", explorative="True")
@@ -21,6 +22,7 @@ target = "result"
 non_scale = "map"
 x = data.drop([target,"day","month","year","date","wait_time_s","match_time_s","team_a_rounds","team_b_rounds"], axis=1)
 y = data[target]
+# y = data[target].replace({'Win': 1, 'Lose': -1, 'Tie': 0})
 
 # map_values = x['map'].unique()
 # print (map_values)
@@ -69,3 +71,10 @@ print(classification_report(y_test, y_predict))
 # confusion = pd.DataFrame(cm, index=["Win", "Tie", "Lost"], columns=["Win", "Tie", "Lost"])
 # sns.heatmap(confusion)
 # plt.show()
+
+# Save the model
+joblib_file = "logistic_regression_model.pkl"
+joblib.dump(model, joblib_file)
+
+# Load the model
+# loaded_model = joblib.load(joblib_file)
