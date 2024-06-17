@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-# from ydata_profiling import ProfileReport
+from ydata_profiling import ProfileReport
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
@@ -10,22 +10,26 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import GridSearchCV
 import seaborn as sns
+import matplotlib
 import matplotlib.pyplot as plt
 import joblib
 
-data = pd.read_csv("csgo.csv")
-# profile = ProfileReport(data, title="Match Report", explorative="True")
-# profile.to_file("report/html")
-
-# split data
 target = "result"
 non_scale = "map"
+data = pd.read_csv("csgo.csv")
+# GET data summarization
+# x = data.drop([non_scale,"day","month","year","date","wait_time_s","match_time_s","team_a_rounds","team_b_rounds"], axis=1)
+# y = x.replace({'Win': 1, 'Lost': -1, 'Tie': 0})
+# print (y)
+# profile = ProfileReport(y, title="Match Report", explorative=True)
+# profile.to_file("report.html")
+
+# split data
+
 x = data.drop([target,"day","month","year","date","wait_time_s","match_time_s","team_a_rounds","team_b_rounds"], axis=1)
 y = data[target]
 # y = data[target].replace({'Win': 1, 'Lose': -1, 'Tie': 0})
 
-# map_values = x['map'].unique()
-# print (map_values)
 
 x_train, x_test, y_train, y_test = train_test_split(x,y, test_size=0.2, random_state=42)
 
@@ -91,14 +95,14 @@ print(classification_report(y_test, y_predict))
 print(classification_report(y_test, y_pred_mapped, target_names=class_labels))
 # # Visualization
 # print (confusion_matrix(y_test,y_predict))
-# cm = np.array(confusion_matrix(y_test,y_predict))
-# confusion = pd.DataFrame(cm, index=["Win", "Tie", "Lost"], columns=["Win", "Tie", "Lost"])
-# sns.heatmap(confusion)
-# plt.show()
+cm = np.array(confusion_matrix(y_test,y_predict))
+confusion = pd.DataFrame(cm, index=["Win", "Tie", "Lost"], columns=["Win", "Tie", "Lost"])
+sns.heatmap(confusion, annot=True)
+plt.show()
 
 # Save the model
-joblib_file = "logistic_regression_model.pkl"
-joblib.dump(model, joblib_file)
+# joblib_file = "logistic_regression_model.pkl"
+# joblib.dump(model, joblib_file)
 
 # Load the model
 # loaded_model = joblib.load(joblib_file)
