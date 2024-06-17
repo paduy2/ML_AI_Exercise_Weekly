@@ -49,7 +49,7 @@ params = {
 }
 
 # model = SVC()
-model = LogisticRegression(multi_class='auto')
+model = LogisticRegression()
 # model = RandomForestClassifier()
 model.fit(x_train, y_train)
 
@@ -60,12 +60,36 @@ model.fit(x_train, y_train)
 
 #Analyze 
 y_predict = model.predict(x_test)
-# Adjust the threshold for each class
 
+# Get predicted probabilities
+y_prob = model.predict_proba(x_test)
+
+# Get the class labels
+class_labels = model.classes_
+print("Class labels:", class_labels)
+# Set custom thresholds for each class
+thresholds = [0.2, 0.2, 0.6]  # Adjust these thresholds based on your needs
+
+# Function to apply thresholds and make predictions
+def apply_thresholds(y_prob, thresholds):
+    y_pred = np.zeros_like(y_prob)
+    for i, threshold in enumerate(thresholds):
+        y_pred[:, i] = (y_prob[:, i] >= threshold).astype(int)
+    return y_pred.argmax(axis=1)
+
+# Apply thresholds to the predicted probabilities
+y_pred_custom_thresholds = apply_thresholds(y_prob, thresholds)
+# print (y_pred_custom_thresholds)
+# print (type(y_pred_custom_thresholds))
+
+# Map numeric predictions back to original labels
+y_pred_mapped = class_labels[y_pred_custom_thresholds]
 #Show Result
 # for i,j in zip(y_predict, y_test):
 #   print ("Predict: {} . Actual: {}".format(i,j))
 print(classification_report(y_test, y_predict))
+print(classification_report(y_test, y_pred_mapped, target_names=class_labels))
+# # Visualization
 # print (confusion_matrix(y_test,y_predict))
 # cm = np.array(confusion_matrix(y_test,y_predict))
 # confusion = pd.DataFrame(cm, index=["Win", "Tie", "Lost"], columns=["Win", "Tie", "Lost"])
