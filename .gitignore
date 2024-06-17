@@ -5,7 +5,7 @@ __pycache__/
 graph.json
 # C extensions
 *.so
-
+*.pkl
 # Distribution / packaging
 .Python
 build/
