@@ -26,20 +26,42 @@ num_transform = Pipeline(steps=[
 ])
 
 # Ord type
+
+# Define the list for ordinal colummns
+#<Line 32 to 36 for replacing>
 education_values = ["some high school", "high school", "some college", "associate's degree", "bachelor's degree",
                     "master's degree"]
 gender = ["male", "female"]
 lunch = x_train["lunch"].unique()
 test_prep = x_train["test preparation course"].unique()
+
 ord_transform = Pipeline(steps=[
   ('imputer', SimpleImputer(strategy='most_frequent')),
   ('encoder', OrdinalEncoder(categories=[education_values, gender, lunch, test_prep])),
 ])
+
 # Nom type
 nom_transform = Pipeline(steps=[
   ('imputer', SimpleImputer(strategy='most_frequent')),
   ('encoder', OneHotEncoder(sparse_output=False,handle_unknown="ignore")),
 ])
+
+#<Line 50 -53 for replacing>
+# num_transform_cols = ["reading score", "writing score"]
+# ord_transform_cols = ["parental level of education", "gender", 
+#                                   "lunch", "test preparation course"]
+# nom_transform_cols = ["race/ethnicity"]
+
+# #Compose prepocessor
+# def preprocessor_func(num_transform_cols, ord_transform_cols, nom_transform_cols):
+#   preprocessor = ColumnTransformer(transformers = [
+#   ('num_feature', num_transform, num_transform_cols),
+#   ('ord_feature', ord_transform, ord_transform_cols),
+#   ('nom_feature', nom_transform, nom_transform_cols),
+# ])
+#   return preprocessor
+
+# preprocessor = preprocessor_func(num_transform_cols, ord_transform_cols, nom_transform_cols)
 
 #Compose prepocessor
 preprocessor = ColumnTransformer(transformers = [
@@ -49,6 +71,8 @@ preprocessor = ColumnTransformer(transformers = [
   ('nom_feature', nom_transform, ["race/ethnicity"]),
 ])
 
+
+#Initialize model for reg
 reg = Pipeline(steps=[
     ("preprocessor", preprocessor),
     ("model", LinearRegression())
@@ -58,3 +82,4 @@ reg.fit(x_train, y_train)
 y_predict = reg.predict(x_test)
 for i, j in zip(y_test, y_predict):
   print("Actual: {} . Predict:{} ".format(i,j))
+
