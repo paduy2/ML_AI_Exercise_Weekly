@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from ydata_profiling import ProfileReport
+# from ydata_profiling import ProfileReport
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
@@ -95,10 +95,10 @@ print(classification_report(y_test, y_predict))
 print(classification_report(y_test, y_pred_mapped, target_names=class_labels))
 # # Visualization
 # print (confusion_matrix(y_test,y_predict))
-cm = np.array(confusion_matrix(y_test,y_predict))
-confusion = pd.DataFrame(cm, index=["Win", "Tie", "Lost"], columns=["Win", "Tie", "Lost"])
-sns.heatmap(confusion, annot=True)
-plt.show()
+# cm = np.array(confusion_matrix(y_test,y_predict))
+# confusion = pd.DataFrame(cm, index=["Win", "Tie", "Lost"], columns=["Win", "Tie", "Lost"])
+# sns.heatmap(confusion, annot=True)
+# plt.show()
 
 # Save the model
 # joblib_file = "logistic_regression_model.pkl"
