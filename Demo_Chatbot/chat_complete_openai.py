@@ -3,6 +3,7 @@ import openai
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+import asyncio
 
 # Set up your OpenAI API key
 openai.api_key = os.environ.get("OPENAI_API_KEY")
@@ -21,23 +22,32 @@ class Prompt(BaseModel):
     prompt: str
 
 def get_openai_response(prompt):
-    response = openai.chat.completions.create(
-        model="gpt-3.5-turbo",
-        max_tokens=150,
-        n=1,
-        stop=None,
-        temperature=0.7,
-        messages=[
-            {"role": "system", "content": "You are an IT Developer assistant. Help debugging code in various programming languages (Python, JavaScript, Java, C++, etc.)."},
-            {"role": "user", "content": f"{prompt}"}
-         ]
-    )
-    return response.choices[0].message
+    try:
+        response = openai.chat.completions.create(
+            model="gpt-3.5-turbo",
+            max_tokens=150,
+            n=1,
+            stop=None,
+            temperature=0.7,
+            messages=[
+                {"role": "system", "content": "You are an IT Developer assistant. Help debugging code in various programming languages (Python, JavaScript, Java, C++, etc.)."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        return response.choices[0].message
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Endpoint for chatbot
 @app.post("/chat/")
 async def chat_endpoint(prompt: Prompt):
-    return {"response": get_openai_response(prompt.prompt)}
+    try:
+        response = get_openai_response(prompt.prompt)
+        return {"response": response}
+    except HTTPException as e:
+        return {"error": str(e.detail)}
+    except Exception as e:
+        return {"error": str(e)}
 
 # Handling OPTIONS requests explicitly
 @app.options("/chat/")
@@ -46,6 +56,21 @@ async def options_endpoint(request: Request):
 
 if __name__ == "__main__":
     import uvicorn
+    import sys
+    import asyncio
+    # Use Selector event loop on Windows to avoid Proactor issues
+    if sys.platform == 'win32':
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    
+    # Paths to the SSL certificate and key files
+    ssl_certfile = "cert.pem"
+    ssl_keyfile = "key.pem"
     
     # Run the FastAPI server with uvicorn
-    uvicorn.run(app, host="localhost", port=8000)
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=8000,
+        ssl_certfile=ssl_certfile,
+        ssl_keyfile=ssl_keyfile
+    )
